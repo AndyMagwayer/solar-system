@@ -25,4 +25,4 @@ The Sun is composed of roughly 98% hydrogen and helium,[46] as are Jupiter and S
 The objects of the inner Solar System are composed mostly of rocky materials,[50] such as silicates, iron or nickel.[51] Jupiter and Saturn are composed mainly of gases with extremely low melting points and high vapor pressure, such as hydrogen, helium, and neon.[51] Ices, like water, methane, ammonia, hydrogen sulfide, and carbon dioxide,[50] have melting points up to a few hundred kelvins.[51] They can be found as ices, liquids, or gases in various places in the Solar System.[51] Icy substances comprise the majority of the satellites of the giant planets, as well as most of Uranus and Neptune (the so-called "ice giants") and the numerous small objects that lie beyond Neptune's orbit.[50][52] Together, gases and ices are referred to as volatiles.[53]
 
 
-![Image alt](https://github.com/{username}/{repository}/raw/{branch}/{path}/image.png)
+![Image alt](https://github.com/AndyMagwayer/solar-system/blob/main/solar-sytem.jpg)

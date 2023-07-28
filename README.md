@@ -11,4 +11,5 @@ Our solar system consists of our star, the Sun, and everything bound to it by gr
 
 The Solar System[c] is the gravitationally bound system of the Sun and the objects that orbit it. The largest of such objects are the eight planets, in order from the Sun: four terrestrial planets named Mercury, Venus, Earth and Mars, two gas giants named Jupiter and Saturn, and two ice giants named Uranus and Neptune. The terrestrial planets have a definite surface and are mostly made of rock and metal. The gas giants are mostly made of hydrogen and helium, while the ice giants are mostly made of 'volatile' substances such as water, ammonia, and methane. In some texts, these terrestrial and giant planets are called the inner Solar System and outer Solar System planets respectively.
 
-![Image alt](https://github.com/{username}/{repository}/raw/{branch}/{path}/image.png)
+![Solar Sytem
+](https://github.com/AndyMagwayer/solar-system/blob/main/ss2.jpg)

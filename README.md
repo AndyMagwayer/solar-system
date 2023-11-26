@@ -3,6 +3,7 @@ Facts About Our Solar System Our solar system consists of our star, the Sun, and
 <br>
 Our planetary system is located in an outer spiral arm of the Milky Way galaxy.
 
+
 <br>
 The Latest
  New NASA Map Details 2023 and 2024 Solar Eclipses in the US

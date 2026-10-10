@@ -1,91 +1,48 @@
-// WebGL Solar System Engine with Google Earth-grade smooth OrbitControls
+// WebGL Solar System & Google Earth Explorer Engine
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 (function() {
   'use strict';
 
-  // --- Planetary Specifications ---
+  // Major World Cities with accurate Latitude & Longitude
+  const CITIES = [
+    { id: 'tashkent', name: 'Ташкент / Tashkent', lat: 41.2995, lon: 69.2401, pop: '2.9M', tz: 'UTC+5' },
+    { id: 'moscow', name: 'Москва / Moscow', lat: 55.7558, lon: 37.6173, pop: '13.1M', tz: 'UTC+3' },
+    { id: 'newyork', name: 'Нью-Йорк / New York', lat: 40.7128, lon: -74.0060, pop: '8.8M', tz: 'UTC-4' },
+    { id: 'london', name: 'Лондон / London', lat: 51.5074, lon: -0.1278, pop: '9.0M', tz: 'UTC+1' },
+    { id: 'paris', name: 'Париж / Paris', lat: 48.8566, lon: 2.3522, pop: '2.1M', tz: 'UTC+2' },
+    { id: 'tokyo', name: 'Токио / Tokyo', lat: 35.6762, lon: 139.6503, pop: '14.0M', tz: 'UTC+9' },
+    { id: 'dubai', name: 'Дубай / Dubai', lat: 25.2048, lon: 55.2708, pop: '3.6M', tz: 'UTC+4' },
+    { id: 'beijing', name: 'Пекин / Beijing', lat: 39.9042, lon: 116.4074, pop: '21.5M', tz: 'UTC+8' },
+    { id: 'cairo', name: 'Каир / Cairo', lat: 30.0444, lon: 31.2357, pop: '9.5M', tz: 'UTC+3' },
+    { id: 'sydney', name: 'Сидней / Sydney', lat: -33.8688, lon: 151.2093, pop: '5.3M', tz: 'UTC+10' },
+    { id: 'rio', name: 'Рио-де-Жанейро / Rio', lat: -22.9068, lon: -43.1729, pop: '6.7M', tz: 'UTC-3' }
+  ];
+
   const PLANET_CONFIG = {
-    sun: {
-      name: 'Sun',
-      radius: 14.0,
-      dist: 0,
-      orbitSpeed: 0,
-      rotSpeed: 0.001,
-      color: 0xffaa00,
-      emissive: true
-    },
-    mercury: {
-      name: 'Mercury',
-      radius: 1.2,
-      dist: 28,
-      orbitSpeed: 0.04,
-      rotSpeed: 0.004,
-      color: 0x9e9e9e
-    },
-    venus: {
-      name: 'Venus',
-      radius: 2.2,
-      dist: 42,
-      orbitSpeed: 0.015,
-      rotSpeed: -0.002, // retrograde
-      color: 0xe0a96d
-    },
-    earth: {
-      name: 'Earth',
-      radius: 2.4,
-      dist: 60,
-      orbitSpeed: 0.01,
-      rotSpeed: 0.02,
-      color: 0x2196f3,
-      hasClouds: true,
-      hasMoon: true
-    },
-    mars: {
-      name: 'Mars',
-      radius: 1.5,
-      dist: 80,
-      orbitSpeed: 0.008,
-      rotSpeed: 0.018,
-      color: 0xc1440e
-    },
-    jupiter: {
-      name: 'Jupiter',
-      radius: 6.5,
-      dist: 120,
-      orbitSpeed: 0.002,
-      rotSpeed: 0.04,
-      color: 0xd4a373
-    },
-    saturn: {
-      name: 'Saturn',
-      radius: 5.2,
-      dist: 165,
-      orbitSpeed: 0.0009,
-      rotSpeed: 0.038,
-      color: 0xf4e04d,
-      hasRing: true
-    },
-    uranus: {
-      name: 'Uranus',
-      radius: 3.5,
-      dist: 215,
-      orbitSpeed: 0.0004,
-      rotSpeed: 0.03,
-      color: 0x70d6ff
-    },
-    neptune: {
-      name: 'Neptune',
-      radius: 3.4,
-      dist: 265,
-      orbitSpeed: 0.0002,
-      rotSpeed: 0.032,
-      color: 0x3a86ff
-    }
+    sun: { name: 'Sun', radius: 14.0, dist: 0, orbitSpeed: 0, rotSpeed: 0.001, color: 0xffaa00, emissive: true },
+    mercury: { name: 'Mercury', radius: 1.2, dist: 28, orbitSpeed: 0.04, rotSpeed: 0.004, color: 0x9e9e9e },
+    venus: { name: 'Venus', radius: 2.2, dist: 42, orbitSpeed: 0.015, rotSpeed: -0.002, color: 0xe0a96d },
+    earth: { name: 'Earth', radius: 2.5, dist: 60, orbitSpeed: 0.01, rotSpeed: 0.005, color: 0x2196f3, hasClouds: true, hasMoon: true },
+    mars: { name: 'Mars', radius: 1.5, dist: 80, orbitSpeed: 0.008, rotSpeed: 0.018, color: 0xc1440e },
+    jupiter: { name: 'Jupiter', radius: 6.5, dist: 120, orbitSpeed: 0.002, rotSpeed: 0.04, color: 0xd4a373 },
+    saturn: { name: 'Saturn', radius: 5.2, dist: 165, orbitSpeed: 0.0009, rotSpeed: 0.038, color: 0xf4e04d, hasRing: true },
+    uranus: { name: 'Uranus', radius: 3.5, dist: 215, orbitSpeed: 0.0004, rotSpeed: 0.03, color: 0x70d6ff },
+    neptune: { name: 'Neptune', radius: 3.4, dist: 265, orbitSpeed: 0.0002, rotSpeed: 0.032, color: 0x3a86ff }
   };
 
-  // --- Procedural Canvas Textures ---
+  // Convert lat/lon to 3D position on sphere of radius R
+  function latLonToVector3(lat, lon, radius) {
+    const phi = (90 - lat) * (Math.PI / 180);
+    const theta = (lon + 180) * (Math.PI / 180);
+    const x = -(radius * Math.sin(phi) * Math.cos(theta));
+    const z = radius * Math.sin(phi) * Math.sin(theta);
+    const y = radius * Math.cos(phi);
+    return new THREE.Vector3(x, y, z);
+  }
+
+  // --- Procedural Textures Fallbacks ---
   function createSunTexture() {
     const c = document.createElement('canvas');
     c.width = 1024; c.height = 512;
@@ -96,8 +53,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     grad.addColorStop(1, '#ff6600');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 1024, 512);
-
-    // Solar flares/granulation
     ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
     for (let i = 0; i < 400; i++) {
       ctx.beginPath();
@@ -107,67 +62,18 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     return new THREE.CanvasTexture(c);
   }
 
-  function createEarthTexture() {
-    const c = document.createElement('canvas');
-    c.width = 1024; c.height = 512;
-    const ctx = c.getContext('2d');
-    // Deep ocean blue
-    ctx.fillStyle = '#103060';
-    ctx.fillRect(0, 0, 1024, 512);
-
-    // Continents
-    ctx.fillStyle = '#2d6a4f';
-    const drawLand = (x, y, w, h) => {
-      ctx.beginPath();
-      ctx.ellipse(x, y, w, h, 0, 0, Math.PI * 2);
-      ctx.fill();
-    };
-    // Eurasia / Africa
-    drawLand(550, 200, 160, 90);
-    drawLand(520, 320, 80, 110);
-    // Americas
-    drawLand(220, 180, 70, 80);
-    drawLand(260, 330, 60, 110);
-    // Australia
-    drawLand(750, 370, 50, 40);
-
-    // Polar ice caps
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 1024, 35);
-    ctx.fillRect(0, 480, 1024, 32);
-
-    return new THREE.CanvasTexture(c);
-  }
-
-  function createEarthCloudTexture() {
-    const c = document.createElement('canvas');
-    c.width = 1024; c.height = 512;
-    const ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, 1024, 512);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-    for (let i = 0; i < 80; i++) {
-      ctx.beginPath();
-      ctx.ellipse(Math.random() * 1024, Math.random() * 512, Math.random() * 70 + 30, Math.random() * 20 + 10, Math.random(), 0, Math.PI * 2);
-      ctx.fill();
-    }
-    return new THREE.CanvasTexture(c);
-  }
-
   function createMarsTexture() {
     const c = document.createElement('canvas');
     c.width = 1024; c.height = 512;
     const ctx = c.getContext('2d');
-    // Rust red
     ctx.fillStyle = '#c1440e';
     ctx.fillRect(0, 0, 1024, 512);
-    // Dark maria
     ctx.fillStyle = '#6e260e';
     for (let i = 0; i < 30; i++) {
       ctx.beginPath();
       ctx.ellipse(Math.random() * 1024, Math.random() * 512, Math.random() * 90 + 30, Math.random() * 40 + 15, 0, 0, Math.PI * 2);
       ctx.fill();
     }
-    // White ice caps
     ctx.fillStyle = '#f8f9fa';
     ctx.fillRect(0, 0, 1024, 25);
     ctx.fillRect(0, 490, 1024, 22);
@@ -178,14 +84,12 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     const c = document.createElement('canvas');
     c.width = 1024; c.height = 512;
     const ctx = c.getContext('2d');
-    // Banded atmosphere
     const bands = ['#d4a373', '#faedcd', '#bc6c25', '#dda15e', '#bb9457', '#e9d8a6', '#99582a'];
     const h = 512 / bands.length;
     bands.forEach((color, i) => {
       ctx.fillStyle = color;
       ctx.fillRect(0, i * h, 1024, h);
     });
-    // Great Red Spot
     ctx.fillStyle = '#a83232';
     ctx.beginPath();
     ctx.ellipse(650, 330, 45, 25, 0, 0, Math.PI * 2);
@@ -213,7 +117,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     const grad = ctx.createLinearGradient(0, 0, 512, 0);
     grad.addColorStop(0, 'rgba(238, 217, 196, 0.1)');
     grad.addColorStop(0.3, 'rgba(238, 217, 196, 0.8)');
-    grad.addColorStop(0.5, 'rgba(0, 0, 0, 0.1)'); // Cassini division
+    grad.addColorStop(0.5, 'rgba(0, 0, 0, 0.1)');
     grad.addColorStop(0.7, 'rgba(212, 163, 115, 0.7)');
     grad.addColorStop(1, 'rgba(212, 163, 115, 0.05)');
     ctx.fillStyle = grad;
@@ -244,14 +148,17 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
       this.currentFocus = 'sun';
       this.timeSpeed = 1.0;
       this.isPaused = false;
-      this.cameraTarget = new THREE.Vector3(0, 0, 0);
+      this.cityPins = [];
+      this.earthMode = false;
 
       this.initScene();
       this.initStars();
       this.initSun();
       this.initPlanets();
+      this.initCityPins();
       this.initOrbits();
       this.initControls();
+      this.initEarthUI();
       this.bindEvents();
 
       this.animate = this.animate.bind(this);
@@ -259,12 +166,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     }
 
     initScene() {
-      // Create high-performance WebGL renderer
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.2;
+      this.renderer.toneMappingExposure = 1.25;
 
       this.canvas = this.renderer.domElement;
       this.canvas.id = 'webgl-canvas';
@@ -276,28 +182,25 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
       this.canvas.style.zIndex = '0';
       this.container.appendChild(this.canvas);
 
-      // Hide CSS 3D solar system element so WebGL takes over with 60 FPS stability
+      // Hide CSS 3D solar system element
       const cssGalaxy = document.getElementById('galaxy');
-      if (cssGalaxy) {
-        cssGalaxy.style.display = 'none';
-      }
+      if (cssGalaxy) cssGalaxy.style.display = 'none';
 
       this.scene = new THREE.Scene();
-      this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 8000);
+      this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.2, 10000);
       this.camera.position.set(0, 90, 160);
 
-      // Ambient light for dark side of planets
-      this.ambientLight = new THREE.AmbientLight(0x333344, 0.4);
+      this.ambientLight = new THREE.AmbientLight(0x333344, 0.45);
       this.scene.add(this.ambientLight);
 
-      // Sun Point Light
-      this.sunLight = new THREE.PointLight(0xffffff, 2.5, 0, 0);
+      this.sunLight = new THREE.PointLight(0xffffff, 2.6, 0, 0);
       this.sunLight.position.set(0, 0, 0);
       this.scene.add(this.sunLight);
+
+      this.textureLoader = new THREE.TextureLoader();
     }
 
     initStars() {
-      // 2500 high-stability background stars
       const starCount = 2500;
       const starGeo = new THREE.BufferGeometry();
       const positions = new Float32Array(starCount * 3);
@@ -321,13 +224,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
       starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       starGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-      const starMat = new THREE.PointsMaterial({
-        size: 2.2,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.85
-      });
-
+      const starMat = new THREE.PointsMaterial({ size: 2.2, vertexColors: true, transparent: true, opacity: 0.85 });
       this.stars = new THREE.Points(starGeo, starMat);
       this.scene.add(this.stars);
     }
@@ -335,87 +232,82 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     initSun() {
       const sunGeo = new THREE.SphereGeometry(PLANET_CONFIG.sun.radius, 48, 48);
       const sunTex = createSunTexture();
-      const sunMat = new THREE.MeshBasicMaterial({
-        map: sunTex,
-        color: 0xffe066
-      });
-
+      const sunMat = new THREE.MeshBasicMaterial({ map: sunTex, color: 0xffe066 });
       this.sunMesh = new THREE.Mesh(sunGeo, sunMat);
       this.scene.add(this.sunMesh);
 
-      // Glowing Corona
       const coronaGeo = new THREE.SphereGeometry(PLANET_CONFIG.sun.radius * 1.15, 32, 32);
-      const coronaMat = new THREE.MeshBasicMaterial({
-        color: 0xffaa00,
-        transparent: true,
-        opacity: 0.18,
-        side: THREE.BackSide
-      });
+      const coronaMat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.18, side: THREE.BackSide });
       this.coronaMesh = new THREE.Mesh(coronaGeo, coronaMat);
       this.scene.add(this.coronaMesh);
 
-      this.planets.sun = {
-        mesh: this.sunMesh,
-        angle: 0,
-        config: PLANET_CONFIG.sun,
-        pivot: new THREE.Group()
-      };
+      this.planets.sun = { mesh: this.sunMesh, angle: 0, config: PLANET_CONFIG.sun, pivot: new THREE.Group() };
     }
 
     initPlanets() {
-      const geoDetail = 40;
+      const geoDetail = 48;
 
       Object.keys(PLANET_CONFIG).forEach(id => {
         if (id === 'sun') return;
         const cfg = PLANET_CONFIG[id];
-
-        // Orbit pivot
         const pivot = new THREE.Group();
         this.scene.add(pivot);
 
-        // Planet mesh
         const geo = new THREE.SphereGeometry(cfg.radius, geoDetail, geoDetail);
-        let tex;
-        if (id === 'earth') tex = createEarthTexture();
-        else if (id === 'mars') tex = createMarsTexture();
-        else if (id === 'jupiter') tex = createJupiterTexture();
-        else if (id === 'saturn') tex = createSaturnTexture();
-        else if (id === 'mercury') tex = createGenericTexture('#9e9e9e');
-        else if (id === 'venus') tex = createGenericTexture('#e0a96d');
-        else if (id === 'uranus') tex = createGenericTexture('#70d6ff');
-        else if (id === 'neptune') tex = createGenericTexture('#3a86ff');
+        let mat;
 
-        const mat = new THREE.MeshStandardMaterial({
-          map: tex,
-          roughness: 0.8,
-          metalness: 0.1
-        });
+        if (id === 'earth') {
+          // NASA Satellite Blue Marble high-res texture
+          const earthTexture = this.textureLoader.load('textures/earth_atmos.jpg');
+          earthTexture.colorSpace = THREE.SRGBColorSpace;
+          mat = new THREE.MeshStandardMaterial({
+            map: earthTexture,
+            roughness: 0.6,
+            metalness: 0.1
+          });
+        } else if (id === 'mars') {
+          mat = new THREE.MeshStandardMaterial({ map: createMarsTexture(), roughness: 0.8 });
+        } else if (id === 'jupiter') {
+          mat = new THREE.MeshStandardMaterial({ map: createJupiterTexture(), roughness: 0.8 });
+        } else if (id === 'saturn') {
+          mat = new THREE.MeshStandardMaterial({ map: createSaturnTexture(), roughness: 0.8 });
+        } else if (id === 'mercury') {
+          mat = new THREE.MeshStandardMaterial({ map: createGenericTexture('#9e9e9e'), roughness: 0.8 });
+        } else if (id === 'venus') {
+          mat = new THREE.MeshStandardMaterial({ map: createGenericTexture('#e0a96d'), roughness: 0.8 });
+        } else if (id === 'uranus') {
+          mat = new THREE.MeshStandardMaterial({ map: createGenericTexture('#70d6ff'), roughness: 0.8 });
+        } else if (id === 'neptune') {
+          mat = new THREE.MeshStandardMaterial({ map: createGenericTexture('#3a86ff'), roughness: 0.8 });
+        }
 
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.set(cfg.dist, 0, 0);
         pivot.add(mesh);
 
-        // Earth Clouds
+        // Earth Clouds with local realistic cloud texture
         let cloudsMesh = null;
         if (cfg.hasClouds) {
-          const cloudsGeo = new THREE.SphereGeometry(cfg.radius * 1.025, geoDetail, geoDetail);
+          const cloudsGeo = new THREE.SphereGeometry(cfg.radius * 1.015, geoDetail, geoDetail);
+          const cloudsTex = this.textureLoader.load('textures/earth_clouds.png');
           const cloudsMat = new THREE.MeshStandardMaterial({
-            map: createEarthCloudTexture(),
+            map: cloudsTex,
             transparent: true,
-            opacity: 0.45,
+            opacity: 0.6,
             blending: THREE.AdditiveBlending
           });
           cloudsMesh = new THREE.Mesh(cloudsGeo, cloudsMat);
           mesh.add(cloudsMesh);
         }
 
-        // Earth Moon
+        // Earth Moon with local NASA moon texture
         let moonMesh = null;
         if (cfg.hasMoon) {
-          const moonGeo = new THREE.SphereGeometry(0.55, 20, 20);
-          const moonMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.9 });
+          const moonGeo = new THREE.SphereGeometry(0.55, 24, 24);
+          const moonTex = this.textureLoader.load('textures/moon.jpg');
+          const moonMat = new THREE.MeshStandardMaterial({ map: moonTex, roughness: 0.9 });
           moonMesh = new THREE.Mesh(moonGeo, moonMat);
-          moonMesh.position.set(5.0, 0, 0);
+          moonMesh.position.set(5.5, 0, 0);
           mesh.add(moonMesh);
         }
 
@@ -446,8 +338,38 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
       });
     }
 
+    initCityPins() {
+      const earthMesh = this.planets.earth.mesh;
+      const earthR = PLANET_CONFIG.earth.radius;
+
+      // Group of pins on Earth
+      this.cityGroup = new THREE.Group();
+      earthMesh.add(this.cityGroup);
+
+      CITIES.forEach(city => {
+        const pos = latLonToVector3(city.lat, city.lon, earthR * 1.01);
+
+        // Glowing marker pin
+        const pinGeo = new THREE.SphereGeometry(0.06, 12, 12);
+        const pinMat = new THREE.MeshBasicMaterial({ color: 0x00ccff });
+        const pinMesh = new THREE.Mesh(pinGeo, pinMat);
+        pinMesh.position.copy(pos);
+        pinMesh.userData = { city };
+
+        // Outer glow ring
+        const ringGeo = new THREE.RingGeometry(0.07, 0.12, 16);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.position.copy(pos.clone().multiplyScalar(1.002));
+        ringMesh.lookAt(pos.clone().multiplyScalar(2));
+        pinMesh.add(ringMesh);
+
+        this.cityGroup.add(pinMesh);
+        this.cityPins.push(pinMesh);
+      });
+    }
+
     initOrbits() {
-      // Subtle elegant orbit lines matching original AndyMagwayer aesthetic
       Object.keys(PLANET_CONFIG).forEach(id => {
         if (id === 'sun') return;
         const dist = PLANET_CONFIG[id].dist;
@@ -463,26 +385,41 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         }
 
         orbitGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const orbitMat = new THREE.LineBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.12
-        });
-        const orbitLine = new THREE.Line(orbitGeo, orbitMat);
-        this.scene.add(orbitLine);
+        const orbitMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12 });
+        this.scene.add(new THREE.Line(orbitGeo, orbitMat));
       });
     }
 
     initControls() {
-      // Signature Google Earth smooth inertial damping
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
-      this.controls.dampingFactor = 0.05; // Google Earth silky smooth weight
+      this.controls.dampingFactor = 0.05; // Google Earth smooth inertia
       this.controls.rotateSpeed = 0.75;
       this.controls.zoomSpeed = 1.2;
-      this.controls.minDistance = 3;
+      this.controls.minDistance = 2.6; // can zoom right down to Earth's satellite surface!
       this.controls.maxDistance = 1500;
       this.controls.target.set(0, 0, 0);
+    }
+
+    initEarthUI() {
+      // Populate city selector
+      const $citySelect = $('#earth-city-select');
+      if ($citySelect.length) {
+        $citySelect.empty().append('<option value="">Select city...</option>');
+        CITIES.forEach(c => {
+          $citySelect.append($('<option>').val(c.id).text(c.name));
+        });
+
+        $citySelect.on('change', () => {
+          const cid = $citySelect.val();
+          if (cid) this.flyToCity(cid);
+        });
+      }
+
+      // Exit button
+      $('#earth-exit-btn').on('click', () => {
+        this.exitEarthMode();
+      });
     }
 
     flyTo(planetId) {
@@ -494,36 +431,168 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
       p.mesh.getWorldPosition(targetPos);
 
       const targetRadius = p.config.radius;
-      const offsetDist = targetRadius * 3.8 + 6;
+      // Close orbit for Earth, comfortable view for others
+      const offsetDist = planetId === 'earth' ? targetRadius * 2.2 : targetRadius * 3.8 + 6;
 
       const startCamPos = this.camera.position.clone();
       const startTarget = this.controls.target.clone();
 
-      // Destination camera position keeping viewing angle
       const dir = startCamPos.clone().sub(startTarget).normalize();
       const endCamPos = targetPos.clone().add(dir.multiplyScalar(offsetDist));
 
-      // 1.5s smooth Google Earth cinematic fly-to transition
       const duration = 1200;
       const startTime = performance.now();
 
       const animateFly = (time) => {
         const elapsed = time - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        // Smooth cubic in-out curve
-        const ease = progress < 0.5 
-          ? 4 * progress * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
         this.camera.position.lerpVectors(startCamPos, endCamPos, ease);
         this.controls.target.lerpVectors(startTarget, targetPos, ease);
 
         if (progress < 1) {
           requestAnimationFrame(animateFly);
+        } else {
+          if (planetId === 'earth') {
+            this.enterEarthMode();
+          } else {
+            this.exitEarthMode();
+          }
         }
       };
 
       requestAnimationFrame(animateFly);
+    }
+
+    flyToCity(cityId) {
+      const city = CITIES.find(c => c.id === cityId);
+      if (!city || !this.planets.earth) return;
+
+      const earthMesh = this.planets.earth.mesh;
+      const earthR = PLANET_CONFIG.earth.radius;
+      const targetPos = new THREE.Vector3();
+      earthMesh.getWorldPosition(targetPos);
+
+      // Rotate camera to view city directly
+      const localCityPos = latLonToVector3(city.lat, city.lon, earthR);
+      const worldCityPos = localCityPos.clone().applyQuaternion(earthMesh.quaternion).add(targetPos);
+
+      const camOffset = worldCityPos.clone().sub(targetPos).normalize().multiplyScalar(earthR * 1.8);
+      const endCamPos = targetPos.clone().add(camOffset);
+
+      const startCamPos = this.camera.position.clone();
+      const startTarget = this.controls.target.clone();
+
+      const duration = 1400;
+      const startTime = performance.now();
+
+      const animateCityFly = (time) => {
+        const elapsed = time - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        this.camera.position.lerpVectors(startCamPos, endCamPos, ease);
+        this.controls.target.lerpVectors(startTarget, targetPos, ease);
+
+        if (progress < 1) {
+          requestAnimationFrame(animateCityFly);
+        } else {
+          this.showCityPopover(city, { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+        }
+      };
+
+      requestAnimationFrame(animateCityFly);
+    }
+
+    enterEarthMode() {
+      this.earthMode = true;
+      $('#earth-explorer-bar').addClass('active');
+      this.controls.minDistance = 2.6; // enable ultra-close surface inspection
+    }
+
+    exitEarthMode() {
+      this.earthMode = false;
+      $('#earth-explorer-bar').removeClass('active');
+      $('#city-popover').hide();
+      this.controls.minDistance = 5;
+
+      // Fly out to general Solar System view
+      const startCam = this.camera.position.clone();
+      const endCam = new THREE.Vector3(0, 90, 160);
+      const startTarget = this.controls.target.clone();
+      const endTarget = new THREE.Vector3(0, 0, 0);
+
+      const duration = 1200;
+      const startTime = performance.now();
+
+      const animateOut = (time) => {
+        const progress = Math.min((time - startTime) / duration, 1);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        this.camera.position.lerpVectors(startCam, endCam, ease);
+        this.controls.target.lerpVectors(startTarget, endTarget, ease);
+        if (progress < 1) requestAnimationFrame(animateOut);
+      };
+      requestAnimationFrame(animateOut);
+
+      // Select sun/all in data
+      this.currentFocus = 'sun';
+      $('#data a').removeClass('active');
+      $('#data a.sun').addClass('active');
+    }
+
+    showCityPopover(city, mouseEvent) {
+      const $pop = $('#city-popover');
+      $('#popover-city-name').text(city.name);
+      $('#popover-city-coords').text(`${city.lat.toFixed(2)}° N, ${city.lon.toFixed(2)}° E`);
+      $('#popover-city-info').text(`Timezone: ${city.tz} · Population: ${city.pop}`);
+
+      // Google Earth link for this exact city
+      const gLink = `https://earth.google.com/web/@${city.lat},${city.lon},150a,5000d,35y,0h,0t,0r?hl=ru`;
+      $('#popover-google-link').attr('href', gLink);
+
+      $pop.css({
+        left: Math.min(mouseEvent.clientX + 10, window.innerWidth - 240) + 'px',
+        top: Math.max(mouseEvent.clientY - 40, 60) + 'px'
+      }).show();
+    }
+
+    updateEarthHUD() {
+      if (!this.planets.earth) return;
+      const earthMesh = this.planets.earth.mesh;
+      const targetPos = new THREE.Vector3();
+      earthMesh.getWorldPosition(targetPos);
+
+      const dist = this.camera.position.distanceTo(targetPos);
+      const earthRadius = PLANET_CONFIG.earth.radius;
+
+      // Altitude scaled to realistic Earth km (Earth radius = 6,371 km)
+      const altitudeRatio = Math.max(0, (dist - earthRadius) / earthRadius);
+      const altitudeKm = Math.round(altitudeRatio * 6371);
+
+      // Format altitude like Google Earth
+      let altStr;
+      if (altitudeKm >= 1000) {
+        altStr = (altitudeKm).toLocaleString('en-US') + ' km';
+      } else {
+        altStr = altitudeKm + ' km';
+      }
+      $('#earth-altitude-val').text(altStr);
+
+      // Calculate approximate latitude and longitude on camera center
+      const camDir = this.camera.position.clone().sub(targetPos).normalize();
+      const localCam = camDir.clone().applyQuaternion(earthMesh.quaternion.clone().invert());
+      const lat = 90 - Math.acos(localCam.y) * (180 / Math.PI);
+      const lon = (Math.atan2(localCam.z, -localCam.x) * (180 / Math.PI)) - 180;
+
+      const latDir = lat >= 0 ? 'N' : 'S';
+      const lonDir = lon >= 0 ? 'E' : 'W';
+      $('#earth-coords-val').text(`${Math.abs(lat).toFixed(2)}° ${latDir}, ${Math.abs(lon).toFixed(2)}° ${lonDir}`);
+
+      // Update Google Earth URL matching user coordinates and altitude
+      const altMeters = Math.max(500, Math.round(altitudeKm * 1000));
+      const gUrl = `https://earth.google.com/web/@${lat.toFixed(6)},${lon.toFixed(6)},0a,${altMeters}d,35y,0h,0t,0r?hl=ru`;
+      $('#earth-google-link').attr('href', gUrl);
     }
 
     bindEvents() {
@@ -533,10 +602,10 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         this.renderer.setSize(window.innerWidth, window.innerHeight);
       });
 
-      // Hook into existing #data menu clicks
+      // Data menu clicks
       const dataLinks = document.querySelectorAll('#data a');
       dataLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
+        link.addEventListener('click', () => {
           const cls = link.getAttribute('class') || '';
           const planetId = cls.replace('active', '').trim();
           if (this.planets[planetId]) {
@@ -545,20 +614,32 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         });
       });
 
-      // Raycaster click on planets
+      // Raycaster for clicking city pins
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
-      this.canvas.addEventListener('dblclick', (e) => {
+      this.canvas.addEventListener('click', (e) => {
         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, this.camera);
 
-        const meshes = Object.keys(this.planets).map(k => this.planets[k].mesh);
-        const intersects = raycaster.intersectObjects(meshes);
+        // Check city pins
+        const pinHits = raycaster.intersectObjects(this.cityPins);
+        if (pinHits.length > 0) {
+          const pin = pinHits[0].object;
+          if (pin.userData && pin.userData.city) {
+            this.showCityPopover(pin.userData.city, e);
+            return;
+          }
+        } else {
+          $('#city-popover').hide();
+        }
 
-        if (intersects.length > 0) {
-          const hitMesh = intersects[0].object;
+        // Check planets
+        const meshes = Object.keys(this.planets).map(k => this.planets[k].mesh);
+        const planetHits = raycaster.intersectObjects(meshes);
+        if (planetHits.length > 0) {
+          const hitMesh = planetHits[0].object;
           const hitId = Object.keys(this.planets).find(k => this.planets[k].mesh === hitMesh);
           if (hitId) {
             const dataLink = document.querySelector(`#data a.${hitId}`);
@@ -572,12 +653,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     animate() {
       requestAnimationFrame(this.animate);
 
-      // Rotate Sun
-      if (this.sunMesh) {
-        this.sunMesh.rotation.y += 0.001;
-      }
+      if (this.sunMesh) this.sunMesh.rotation.y += 0.001;
 
-      // Update orbits and planetary axial rotations
       if (!this.isPaused) {
         Object.keys(this.planets).forEach(id => {
           if (id === 'sun') return;
@@ -593,13 +670,12 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
           }
           if (p.moonMesh) {
             const mAngle = Date.now() * 0.002;
-            p.moonMesh.position.x = Math.cos(mAngle) * 5.2;
-            p.moonMesh.position.z = Math.sin(mAngle) * 5.2;
+            p.moonMesh.position.x = Math.cos(mAngle) * 5.5;
+            p.moonMesh.position.z = Math.sin(mAngle) * 5.5;
           }
         });
       }
 
-      // If tracking a planet, keep controls target locked smoothly
       if (this.currentFocus && this.planets[this.currentFocus]) {
         const targetPos = new THREE.Vector3();
         this.planets[this.currentFocus].mesh.getWorldPosition(targetPos);
@@ -607,11 +683,15 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
       }
 
       this.controls.update();
+
+      if (this.earthMode || this.currentFocus === 'earth') {
+        this.updateEarthHUD();
+      }
+
       this.renderer.render(this.scene, this.camera);
     }
   }
 
-  // Initialize once DOM is ready
   window.addEventListener('DOMContentLoaded', () => {
     window.solarViewer = new SolarSystemViewer();
   });

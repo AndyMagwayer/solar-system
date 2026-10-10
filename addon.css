@@ -196,3 +196,135 @@
 #calc-backdrop.open {
   display: block;
 }
+
+/* Earth Explorer Google Earth HUD */
+#earth-explorer-bar {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  background: rgba(8, 9, 10, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
+  font-family: 'Open Sans', sans-serif;
+  color: #FFF;
+  font-size: 12px;
+  align-items: center;
+  gap: 16px;
+}
+
+#earth-explorer-bar.active {
+  display: flex;
+}
+
+.earth-hud-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.earth-hud-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+}
+
+.earth-hud-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0CF;
+}
+
+.earth-city-select {
+  background: #111417;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFF;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.earth-city-select:focus {
+  border-color: #0CF;
+}
+
+.earth-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFF;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.earth-btn:hover {
+  background: #0CF;
+  color: #000;
+  border-color: #0CF;
+}
+
+.earth-btn.primary {
+  background: rgba(0, 204, 255, 0.15);
+  border-color: rgba(0, 204, 255, 0.4);
+  color: #0CF;
+}
+.earth-btn.primary:hover {
+  background: #0CF;
+  color: #000;
+}
+
+/* City popover card */
+#city-popover {
+  display: none;
+  position: fixed;
+  z-index: 160;
+  background: rgba(8, 9, 10, 0.95);
+  border: 1px solid #0CF;
+  box-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-family: 'Open Sans', sans-serif;
+  color: #FFF;
+  font-size: 12px;
+  pointer-events: auto;
+  max-width: 220px;
+}
+
+#city-popover h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #0CF;
+}
+
+#city-popover p {
+  margin: 2px 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+}
+
+#city-popover a {
+  display: inline-block;
+  margin-top: 6px;
+  color: #0CF;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 11px;
+}
+#city-popover a:hover {
+  text-decoration: underline;
+}

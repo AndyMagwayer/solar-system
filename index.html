@@ -204,6 +204,38 @@
       </div>
       <div class="calc-footer-info" id="calc-planet-times-info"></div>
     </div>
+
+    <!-- Earth Explorer Google Earth Bar -->
+    <div id="earth-explorer-bar">
+      <div class="earth-hud-item">
+        <span class="earth-hud-label">Earth Altitude</span>
+        <span class="earth-hud-val" id="earth-altitude-val">22,250 km</span>
+      </div>
+      <div class="earth-hud-item">
+        <span class="earth-hud-label">Coordinates</span>
+        <span class="earth-hud-val" id="earth-coords-val">0.00° N, 0.00° E</span>
+      </div>
+      <div class="earth-hud-item">
+        <span class="earth-hud-label">Jump to city</span>
+        <select id="earth-city-select" class="earth-city-select">
+          <option value="">Select city...</option>
+        </select>
+      </div>
+      <a id="earth-google-link" href="https://earth.google.com/web/@0,0,0a,22251752d" target="_blank" class="earth-btn primary">
+        <span>🗺️ Google Earth ↗</span>
+      </a>
+      <button id="earth-exit-btn" class="earth-btn">
+        <span>🌌 Solar System</span>
+      </button>
+    </div>
+
+    <!-- City Popover Card -->
+    <div id="city-popover">
+      <h4 id="popover-city-name">City</h4>
+      <p id="popover-city-coords">0.00° N, 0.00° E</p>
+      <p id="popover-city-info">Time: --:--</p>
+      <a id="popover-google-link" href="#" target="_blank">Open in Google Earth ↗</a>
+    </div>
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script>
       if (typeof jQuery === 'undefined') {

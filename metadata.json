@@ -1,0 +1,8 @@
+{
+  "name": "3D Solar System",
+  "description": "An interactive 3D CSS model of the Solar System with controls for speed, size, and orbital distance.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

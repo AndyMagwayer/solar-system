@@ -1,0 +1,15 @@
+{
+  "name": "solar-system",
+  "version": "1.0.0",
+  "description": "An interactive 3D CSS model of the Solar System with controls for speed, size, and orbital distance.",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'No build required'"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "jquery": "^3.7.1"
+  }
+}

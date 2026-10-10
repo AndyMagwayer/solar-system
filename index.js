@@ -35,6 +35,8 @@ $(function() {
   $(".set-speed").click(function() { setView("scale-stretched set-speed"); });
   $(".set-size").click(function() { setView("scale-s set-size"); });
   $(".set-distance").click(function() { setView("scale-d set-distance"); });
+  $(".set-time").click(function() { setView("scale-stretched set-time"); });
+  $(".set-calc").click(function() { $("#calc-panel, #calc-backdrop").addClass("open"); });
 
   init();
 });

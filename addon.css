@@ -1,674 +1,198 @@
-/* Space Features Addon Styling */
-:root {
-  --space-hud-bg: rgba(10, 14, 26, 0.88);
-  --space-hud-border: rgba(0, 229, 255, 0.35);
-  --space-cyan: #00e5ff;
-  --space-gold: #ffd166;
-  --space-magenta: #ff4081;
-  --space-green: #06d6a0;
-  --space-text: #e2e8f0;
-  --space-muted: #94a3b8;
-  --space-glow: 0 0 15px rgba(0, 229, 255, 0.4);
+/* Addon styling: perfectly matched with AndyMagwayer's original dark minimal aesthetic */
+
+/* Live Planetary Time in the original 3D callout */
+.set-time dl.infos dd:after {
+  content: attr(data-time) !important;
 }
 
-/* Navbar Extension */
-#navbar {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px 16px !important;
-  background: rgba(8, 9, 10, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
+.set-time dl.infos dd span:after {
+  content: attr(data-time-sub) !important;
 }
 
-.nav-extra-actions {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.hud-btn {
-  background: rgba(0, 229, 255, 0.12);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  color: #00e5ff !important;
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  text-decoration: none !important;
-}
-
-.hud-btn:hover, .hud-btn.active {
-  background: rgba(0, 229, 255, 0.25);
-  border-color: #00e5ff;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.hud-btn.gold {
-  background: rgba(255, 209, 102, 0.12);
-  border-color: rgba(255, 209, 102, 0.4);
-  color: #ffd166 !important;
-}
-.hud-btn.gold:hover, .hud-btn.gold.active {
-  background: rgba(255, 209, 102, 0.25);
-  border-color: #ffd166;
-  box-shadow: 0 0 12px rgba(255, 209, 102, 0.4);
-}
-
-/* Floating HUD Planet Status (Top Right) */
-#live-hud-pill {
+/* Interplanetary Distance & Speed Calculator matching original Open Sans & dark theme */
+#calc-panel {
+  display: none;
   position: fixed;
-  top: 70px;
-  right: 20px;
-  z-index: 900;
-  background: var(--space-hud-bg);
-  border: 1px solid var(--space-hud-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 12px;
-  padding: 12px 18px;
-  color: var(--space-text);
-  box-shadow: var(--space-glow), 0 8px 32px rgba(0, 0, 0, 0.5);
-  min-width: 240px;
-  transition: all 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  cursor: pointer;
-}
-
-#live-hud-pill:hover {
-  border-color: var(--space-cyan);
-  transform: scale(1.02);
-}
-
-.pill-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.pill-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--space-cyan);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.pill-badge {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(0, 229, 255, 0.15);
-  color: #fff;
-}
-
-.pill-clock {
-  font-family: monospace;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 1px;
-  margin: 4px 0;
-  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
-}
-
-.pill-detail {
-  font-size: 11px;
-  color: var(--space-muted);
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2px;
-}
-
-/* Time Warp Controls (Bottom Floating Bar) */
-#time-warp-bar {
-  position: fixed;
-  bottom: 20px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  z-index: 900;
-  background: var(--space-hud-bg);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  border-radius: 30px;
-  padding: 6px 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-  font-family: sans-serif;
-}
-
-.time-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: #94a3b8;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.time-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.time-btn.active {
-  background: var(--space-cyan);
-  color: #000;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-}
-
-.time-label {
-  font-size: 10px;
-  color: var(--space-muted);
-  text-transform: uppercase;
-  margin-right: 4px;
-  letter-spacing: 0.5px;
-}
-
-/* Modal Windows for Planet Info & Distance Calculator */
-.space-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  padding: 16px;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  background: rgba(8, 9, 10, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
   box-sizing: border-box;
+  color: #FFF;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
 }
 
-.space-modal-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
+#calc-panel.open {
+  display: block;
 }
 
-.space-modal {
-  background: #0d121f;
-  background: linear-gradient(135deg, rgba(16, 22, 38, 0.96) 0%, rgba(9, 13, 24, 0.98) 100%);
-  border: 1px solid var(--space-hud-border);
-  box-shadow: var(--space-glow), 0 20px 50px rgba(0, 0, 0, 0.8);
-  border-radius: 16px;
-  width: 100%;
-  max-width: 680px;
-  max-height: 85vh;
+#calc-panel h2 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  color: var(--space-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes modalPop {
-  0% { transform: scale(0.95); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.modal-header {
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  display: flex;
   align-items: center;
-  gap: 8px;
+  color: #FFF;
 }
 
-.modal-close-btn {
-  background: transparent;
+#calc-panel .close-btn {
+  background: none;
   border: none;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 20px;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.2s;
+  padding: 0 4px;
   line-height: 1;
 }
 
-.modal-close-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+#calc-panel .close-btn:hover {
+  color: #FFF;
 }
 
-.modal-body {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-/* Tabs */
-.modal-tabs {
+.calc-row {
   display: flex;
-  gap: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 20px;
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.tab-btn {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: #94a3b8;
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tab-btn:hover {
-  color: #fff;
-}
-
-.tab-btn.active {
-  color: var(--space-cyan);
-  border-bottom-color: var(--space-cyan);
-}
-
-/* Calculator Grid */
-.calc-selectors {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 12px;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
+  gap: 12px;
 }
 
-.planet-select-box label {
-  display: block;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--space-muted);
-  margin-bottom: 4px;
-  font-weight: 600;
+.calc-row label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  min-width: 110px;
 }
 
-.planet-select-box select, .speed-input-box select, .weight-box input, .speed-custom-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #fff;
-  padding: 8px 12px;
-  font-size: 14px;
+.calc-select, .calc-input {
+  flex: 1;
+  background: #111417;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFF;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 2px;
   outline: none;
-  transition: border-color 0.2s;
   box-sizing: border-box;
 }
 
-.planet-select-box select:focus, .weight-box input:focus, .speed-custom-input:focus {
-  border-color: var(--space-cyan);
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+.calc-select:focus, .calc-input:focus {
+  border-color: #0CF;
 }
 
-.calc-swap-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  margin-top: 14px;
-}
-
-.calc-swap-btn:hover {
-  background: var(--space-cyan);
-  color: #000;
-  transform: rotate(180deg);
-}
-
-/* Result Cards */
-.calc-result-hero {
-  background: rgba(0, 229, 255, 0.05);
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+.calc-result-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px;
+  margin: 16px 0;
   text-align: center;
 }
 
-.calc-distance-value {
-  font-size: 28px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.5px;
-  text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+.calc-dist-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFF;
   margin: 4px 0;
 }
 
-.calc-distance-sub {
-  font-size: 13px;
-  color: var(--space-cyan);
-  font-weight: 500;
+.calc-dist-sub {
+  font-size: 12px;
+  color: #0CF;
 }
 
-.calc-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 14px;
+.calc-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.stat-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 10px;
-  text-align: center;
+.calc-stats span {
+  display: block;
+  color: #FFF;
+  font-weight: 600;
+  margin-top: 2px;
 }
 
-.stat-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--space-muted);
-  margin-bottom: 4px;
-}
-
-.stat-val {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-}
-
-/* Speed / Travel Time Section */
-.speed-control-section {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.speed-presets {
+.calc-presets {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 8px;
+  margin: 8px 0 14px;
 }
 
-.preset-chip {
-  background: rgba(255, 255, 255, 0.06);
+.calc-preset-btn {
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #cbd5e1;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Open Sans', sans-serif;
   font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 3px 8px;
+  border-radius: 2px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.preset-chip:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+.calc-preset-btn:hover, .calc-preset-btn.active {
+  background: #0CF;
+  color: #000;
+  border-color: #0CF;
 }
 
-.preset-chip.active {
-  background: rgba(0, 229, 255, 0.2);
-  border-color: var(--space-cyan);
-  color: #00e5ff;
-  font-weight: 600;
-}
-
-.travel-time-banner {
-  margin-top: 14px;
-  padding: 12px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, rgba(255, 209, 102, 0.1) 0%, rgba(255, 64, 129, 0.1) 100%);
-  border: 1px solid rgba(255, 209, 102, 0.3);
+.calc-time-box {
+  background: rgba(0, 204, 255, 0.06);
+  border: 1px solid rgba(0, 204, 255, 0.2);
+  padding: 10px 14px;
+  margin-top: 12px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-.travel-time-title {
+.calc-time-label {
   font-size: 12px;
-  color: #ffd166;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.calc-time-val {
+  font-size: 15px;
   font-weight: 600;
+  color: #FFF;
 }
 
-.travel-time-val {
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-}
-
-/* Planet Card Details */
-.planet-hero {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.planet-avatar {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-}
-
-.planet-hero-title h3 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: #fff;
-}
-
-.planet-hero-title p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--space-muted);
-}
-
-.planet-time-card {
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
-
-.planet-time-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.time-box-item {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.time-box-item .title {
-  font-size: 10px;
-  color: var(--space-muted);
-  text-transform: uppercase;
-}
-
-.time-box-item .clock {
-  font-family: monospace;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  margin-top: 4px;
-}
-
-.time-box-item .sub {
+.calc-footer-info {
+  margin-top: 12px;
   font-size: 11px;
-  color: var(--space-cyan);
-  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
 }
 
-.props-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.prop-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.prop-name {
-  color: var(--space-muted);
-}
-.prop-value {
-  color: #fff;
-  font-weight: 600;
-}
-
-/* Weight Calculator in Planet Card */
-.weight-card {
-  background: rgba(255, 209, 102, 0.06);
-  border: 1px solid rgba(255, 209, 102, 0.25);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.weight-calc-flex {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.weight-calc-result {
-  flex: 1;
-  text-align: right;
-  font-size: 18px;
-  font-weight: 700;
-  color: #ffd166;
-}
-
-/* Asteroid Belt */
-#asteroid-belt {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 62em;
-  height: 62em;
-  margin-top: -31em;
-  margin-left: -31em;
-  border-radius: 50%;
-  border: 1px dashed rgba(200, 200, 220, 0.2);
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.08) inset, 0 0 25px rgba(255, 255, 255, 0.08);
-  pointer-events: none;
-  transform-style: preserve-3d;
-  animation: beltOrbit 40s linear infinite;
-}
-
-@keyframes beltOrbit {
-  0% { transform: rotateZ(0deg); }
-  100% { transform: rotateZ(-360deg); }
-}
-
-/* Free 3D Drag Indicator / Reset Button */
-#drag-hint {
+#calc-backdrop {
+  display: none;
   position: fixed;
-  bottom: 66px;
-  left: 20px;
-  background: rgba(8, 12, 20, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 6px 12px;
-  border-radius: 20px;
-  color: #94a3b8;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 800;
-  backdrop-filter: blur(8px);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 199;
 }
 
-#reset-camera-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  color: #00e5ff;
-  border-radius: 12px;
-  padding: 2px 8px;
-  font-size: 10px;
-  cursor: pointer;
-}
-#reset-camera-btn:hover {
-  background: rgba(0, 229, 255, 0.2);
-}
-
-@media (max-width: 600px) {
-  #live-hud-pill {
-    top: auto;
-    bottom: 80px;
-    right: 12px;
-    left: 12px;
-    min-width: auto;
-  }
-  .calc-selectors {
-    grid-template-columns: 1fr;
-  }
-  .calc-swap-btn {
-    margin: 0 auto;
-  }
-  .calc-stats-grid {
-    grid-template-columns: 1fr;
-  }
-  .props-grid {
-    grid-template-columns: 1fr;
-  }
+#calc-backdrop.open {
+  display: block;
 }

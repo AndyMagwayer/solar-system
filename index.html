@@ -46,6 +46,14 @@
         <input type="radio" class="set-distance" name="scale">
         <span>Distance</span>
       </label>
+      <label>
+        <input type="radio" class="set-time" name="scale">
+        <span>Time</span>
+      </label>
+      <label>
+        <input type="radio" class="set-calc" name="scale">
+        <span>Calc km/h</span>
+      </label>
     </div>
     <div id="universe" class="scale-stretched">
       <div id="galaxy">
@@ -144,6 +152,49 @@
           </div>
         </div>
       </div>
+    </div>
+    <div id="calc-backdrop"></div>
+    <div id="calc-panel">
+      <h2>
+        <span>Distance & Speed (km/h)</span>
+        <button class="close-btn" id="close-calc-btn">&times;</button>
+      </h2>
+      <div class="calc-row">
+        <label>From planet:</label>
+        <select id="calc-from" class="calc-select"></select>
+      </div>
+      <div class="calc-row">
+        <label>To planet:</label>
+        <select id="calc-to" class="calc-select"></select>
+      </div>
+      <div class="calc-result-box">
+        <div style="font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.5);">Current Real-Time Distance</div>
+        <div class="calc-dist-value" id="calc-dist-km">---</div>
+        <div class="calc-dist-sub" id="calc-dist-au">--- AU</div>
+        <div class="calc-stats">
+          <div>Closest: <span id="calc-min-km">---</span></div>
+          <div>Furthest: <span id="calc-max-km">---</span></div>
+          <div>Light delay: <span id="calc-light-delay">---</span></div>
+        </div>
+      </div>
+      <div class="calc-row">
+        <label>Travel Speed:</label>
+        <div style="display: flex; gap: 6px; flex: 1;">
+          <input type="number" id="calc-speed-input" class="calc-input" value="40000" min="1">
+          <span style="font-size: 12px; display: flex; align-items: center; color: rgba(255,255,255,0.7);">km/h</span>
+        </div>
+      </div>
+      <div class="calc-presets">
+        <button class="calc-preset-btn active" data-speed="40000">Spacecraft (40,000 km/h)</button>
+        <button class="calc-preset-btn" data-speed="58536">New Horizons (58,536 km/h)</button>
+        <button class="calc-preset-btn" data-speed="61200">Voyager-1 (61,200 km/h)</button>
+        <button class="calc-preset-btn" data-speed="1079252848">Speed of Light</button>
+      </div>
+      <div class="calc-time-box">
+        <div class="calc-time-label">Estimated travel time:</div>
+        <div class="calc-time-val" id="calc-travel-time">---</div>
+      </div>
+      <div class="calc-footer-info" id="calc-planet-times-info"></div>
     </div>
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script>

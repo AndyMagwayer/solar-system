@@ -9,6 +9,14 @@
     <meta property="og:description" content="An interactive 3D CSS model of the Solar System with controls for speed, size, and orbital distance.">
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="addon.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "/vendor/three/build/three.module.js",
+        "three/addons/": "/vendor/three/examples/jsm/"
+      }
+    }
+    </script>
 </head>
 <body class="opening hide-UI view-2D zoom-large data-close controls-close">
     <div id="navbar">
@@ -204,5 +212,6 @@
     </script>
     <script src="index.js"></script>
     <script src="space-features.js"></script>
+    <script type="module" src="webgl-universe.js"></script>
 </body>
 </html>

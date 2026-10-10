@@ -14,6 +14,7 @@ app.use(express.static(__dirname));
 
 // Serve jquery from node_modules if needed
 app.use('/vendor/jquery', express.static(join(__dirname, 'node_modules/jquery/dist')));
+app.use('/vendor/three', express.static(join(__dirname, 'node_modules/three')));
 
 // Fallback to index.html for SPA / static routes
 app.get('*', (req, res) => {

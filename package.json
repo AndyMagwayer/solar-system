@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "express": "^4.21.2",
-    "jquery": "^3.7.1"
+    "jquery": "^3.7.1",
+    "three": "^0.186.1"
   }
 }
